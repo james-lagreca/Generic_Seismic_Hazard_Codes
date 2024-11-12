@@ -8,8 +8,7 @@ Created on Thu Aug 27 11:28:54 2015
 # created bt Talllen, modifed by JLG
 
 import sys
-sys.path.append(r"C:\Users\Admin\OneDrive - The University of Melbourne\PhD\Github\Generic_Seismic_Hazard_Codes\treviallen_codes")
-
+sys.path.append(r"C:\Users\Admin\OneDrive - The University of Melbourne\PhD\Github\my_codes")
 
 
 from mmi_tools import allen_etal_2012_rrup_ipe, allen_etal_2012_rhypo_ipe, \
