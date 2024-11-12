@@ -5,15 +5,14 @@ Created on Thu Aug 27 11:28:54 2015
 @author: tallen
 """
 
-# created bt Talllen, modifed by JLG
-
+# created by Tallen, modified by JLG
 
 from mmi_tools import allen_etal_2012_rrup_ipe, allen_etal_2012_rhypo_ipe, \
                       atkinson_wald_ceus_ipe, atkinson_wald_cal_ipe, pgm2mmi_worden12, \
                       atkinson_worden_wald14_cal_ipe, atkinson_worden_wald14_ceus_ipe, \
                       atkinson_worden_wald14_ceus_oq, leonard15_ipe
 from misc_tools import get_mpl2_colourlist
-from numpy import array, arange, log10, sqrt
+from numpy import array, arange, log10, sqrt, logspace
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.style.use('classic')
