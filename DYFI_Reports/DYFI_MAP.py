@@ -48,32 +48,33 @@ for feature in data['features']:
 # set eq details
 ###############################################################################
 
-# Woods Point
-mag  = 5.9
+# Prompt the user to enter the zoom level
+zoom_factor = float(input("Enter the zoom factor (e.g., 1 for default zoom, 0.5 for closer zoom, 2 for farther view): "))
+
+# Set eq details
+mag = 5.9
 eqdep = 12.0
 eqla = -37.5063
 eqlo = 146.4022
-degrng = 5.9
+degrng = 5.9 * zoom_factor  # Adjust zoom level based on user input
 latoff = -0.0
 lonoff = -1.2
 mstr = '5.9'
 place = 'Woods Point, VIC'
 evid = '2021-09-21'
 
-##########################################################################################
-# set up map
-##########################################################################################
+# Set the map extent to center around the earthquake
+# Adjust the bounds based on `degrng` for zoom
+urcrnrlat = eqla + degrng
+llcrnrlat = eqla - degrng
+urcrnrlon = eqlo + degrng
+llcrnrlon = eqlo - degrng
 
-# make bounds on the fly - adjust to make more rectangular and taller
-urcrnrlat = eqla + degrng * 1.2 + latoff
-llcrnrlat = eqla - degrng * 1.2 + latoff
-urcrnrlon = eqlo + degrng * 1.2 + lonoff
-llcrnrlon = eqlo - degrng * 1.2 + lonoff
-
-# set up figure
+# Set up figure
 fig = plt.figure(figsize=(10, 12))
 ax = plt.axes(projection=ccrs.PlateCarree())
 ax.set_extent([llcrnrlon, urcrnrlon, llcrnrlat, urcrnrlat], crs=ccrs.PlateCarree())
+
 
 # Add map features
 ax.add_feature(cfeature.LAND, facecolor='0.9')
@@ -103,6 +104,7 @@ reader = shapereader.Reader(shpfilename)
 preferred_offset = (-0.3, -0.3)  # Preferred initial offset for placing labels (bottom-left)
 
 texts = []
+# Adjust text placement closer to the city markers
 for record in reader.records():
     city_name = record.attributes['NAME']
     lat = record.geometry.y
@@ -118,8 +120,8 @@ for record in reader.records():
         # Plot the city marker
         ax.plot(lon, lat, 'o', color='black', markersize=5, transform=ccrs.PlateCarree(), zorder=1100)
 
-        # Initially place the text in the preferred position (bottom-left)
-        text = ax.text(lon + preferred_offset[0], lat + preferred_offset[1], city_name, 
+        # Place the text closer to the city marker with a smaller offset
+        text = ax.text(lon + 0.05, lat + 0.05, city_name,
                        fontsize=10, weight='bold', color='black',
                        path_effects=[path_effects.withStroke(linewidth=3, foreground='white')],
                        transform=ccrs.PlateCarree(), zorder=1100)
@@ -129,11 +131,12 @@ for record in reader.records():
 adjust_text(
     texts,
     only_move={'points': 'xy', 'texts': 'xy'},  # Allow text to be adjusted in both x and y directions
-    expand_text=(1.5, 1.5),  # Expand space around text labels
-    force_text=(10, 10),  # Apply some force to move texts if needed
+    expand_text=(1.2, 1.2),  # Expand space around text labels slightly
+    force_text=(5, 5),  # Reduce the force to move texts compared to the original
     avoid_points=[(eqlo, eqla)],  # Avoid the earthquake location
     arrowprops=None
 )
+
 
 
 
@@ -190,11 +193,12 @@ for dyfi in dyfi_dict:
 x, y = eqlo, eqla
 ax.plot(x, y, '*', color='red', markersize=25, markerfacecolor='None', mew=1.5, transform=ccrs.PlateCarree(), zorder=1000)
 
-# add n responses txt
+# Add the number of responses text and set a higher zorder to ensure it stays on top
 plttxt = 'Number of Responses = ' + str(nresp)
 x, y = llcrnrlon + 0.02 * (urcrnrlon - llcrnrlon), urcrnrlat - 0.02 * (urcrnrlat - llcrnrlat)
-props = dict(boxstyle='round', facecolor='w', alpha=1)
-ax.text(x, y, plttxt, size=16, ha='left', va='top', bbox=props, transform=ccrs.PlateCarree(), zorder=1000)
+props = dict(boxstyle='round', facecolor='w', alpha=1, edgecolor='black', linewidth=1.5)  # Make the box more prominent
+ax.text(x, y, plttxt, size=16, ha='left', va='top', bbox=props, transform=ccrs.PlateCarree(), zorder=2000)
+
 
 ##########################################################################################
 # make colorbar
